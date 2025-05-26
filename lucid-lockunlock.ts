@@ -35,7 +35,7 @@ type Vestingdatum = typeof Vestingdatum;
 //---------------------------------------------------
 
 const deadlineDate = Date.now(); 
-const offset = 25 * 60 * 1000; // 5 phút
+const offset = 25 * 60 * 1000; // thời gian hiệu lực 
 const deadlinePosIx =BigInt((deadlineDate+offset))
 console.log(">>> DeadlinePosIx: ", deadlinePosIx);
 
