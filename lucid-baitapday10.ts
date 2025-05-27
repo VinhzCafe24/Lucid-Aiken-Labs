@@ -125,8 +125,15 @@ async function main() {
     // const txHash = await lockUtxo(lovelace_lock); 
 
     // Gọi hàm unlockUtxo để mở khóa UTxO
+   // Gọi hàm unlockUtxo để mở khóa UTxO
     const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.beneficiary);
-    //const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.owner);
+    // const txHash = await unlockUtxo("8f0bdf4e042033c6fc1b760356b281d9e5a3e82ff7135ce5ef1cf7f9", d.owner);
+    // const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.beneficiary);
+    // const txHash = await unlockUtxo("8f0bdf4e042033c6fc1b760356b281d9e5a3e82ff7135ce5ef1cf7f9", d.owner);
+
+// > Datum owner:       0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824
+// > Redeemer:          0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824
+// > Datum beneficiary: 8f0bdf4e042033c6fc1b760356b281d9e5a3e82ff7135ce5ef1cf7f9
     
    
    console.log(`Transaction hash: https://preview.cexplorer.io/tx/${txHash}`);
