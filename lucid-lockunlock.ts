@@ -14,7 +14,7 @@ lucid.selectWalletFromSeed(seed, { addressType: "Base", index: 0});
 const address = await lucid.wallet.address(); 
 console.log (`>>> My-Wallet: ${address}`)
 const { payment: paymentOwner  } = Addresses.inspect(address);
-console.log(`>>> PaymentOwner.hash: ${paymentOwner.hash}`); 
+console.log(`paymentOwner.hash: ${paymentOwner.hash}`); 
 
 const vesting_scripts = lucid.newScript({
   type: "PlutusV3",
@@ -35,14 +35,15 @@ type Vestingdatum = typeof Vestingdatum;
 //---------------------------------------------------
 
 const deadlineDate = Date.now(); 
-const offset = 25 * 60 * 1000; // thời gian hiệu lực 
+const offset = 25 * 60 * 1000; // 5 phút
 const deadlinePosIx =BigInt((deadlineDate+offset))
 console.log(">>> DeadlinePosIx: ", deadlinePosIx);
 
 const { payment: paymentBeneficiary } = Addresses.inspect(
-  "addr_test1qz8shh6wqssr83hurdmqx44js8v7tglg9lm3xh89auw007dd38kf3ymx9c2w225uc7yjmplr794wvc96n5lsy0wsm8fq9n5epq",
+  // "addr_test1qz8shh6wqssr83hurdmqx44js8v7tglg9lm3xh89auw007dd38kf3ymx9c2w225uc7yjmplr794wvc96n5lsy0wsm8fq9n5epq",
+     "addr_test1qzhmts2nhr3fpag0wl0ns4puqlseg5ey4hfa3n8w95x9ym0mgx64n2gpvmhy8ru6m08307wwv7q25hmtxafd5end5eusk8c8vd",
 );
-console.log(`>>> paymentBeneficiary.hash: ${paymentBeneficiary.hash}`); 
+console.log(`>>> Thụ hưởng.hash: ${paymentBeneficiary.hash}`); 
 
 // giá trị Datum chứa Thời hạn chia tài sản dealinePosTx
 // Hash của ông chia tài sản Owner
@@ -55,7 +56,6 @@ const d = {
 
 const datum = await Data.to<Vestingdatum>(d, Vestingdatum);
 
-
 // Cấu trúc Redeemer
 const RedeemerSchema = Data.Object({
   value: Data.Bytes,
@@ -63,13 +63,13 @@ const RedeemerSchema = Data.Object({
 
 type RedeemerSchema = typeof RedeemerSchema;
 
-const lovelace_lock=100_000_019n // lock 100tADA theo yêu cầu bài tập
+const lovelace_lock=19_019_019n // lock 100tADA theo yêu cầu bài tập
 
 // === Hàn Lock UTxO =====  
 
 export async function lockUtxo(lovelace: bigint,): Promise<string> {
   console.log("xxx Lock UTxO xxx")
-  console.log(">>> Datum lock_until: ", Number(d.lock_until));
+  console.log("Datum lock_until: ", Number(d.lock_until));
 
   const tx = await lucid
     .newTx()
@@ -87,7 +87,7 @@ export async function lockUtxo(lovelace: bigint,): Promise<string> {
 export async function unlockUtxo(redeemer: RedeemerSchema, find_vest: Data.Bytes): Promise<string> {
   // Tìm UTxO tại địa chỉ signerbyAddress
   console.log("---vvv Unlock UTxO vvv--- ")
-  console.log("")
+  // console.log("")
   const utxo = (await lucid.utxosAt(signerbyAddress)).find((utxo) => {
     if (!utxo.scriptRef && utxo.datum) {
       // Giải mã utxo.datum thành đối tượng Vestingdatum
@@ -98,42 +98,45 @@ export async function unlockUtxo(redeemer: RedeemerSchema, find_vest: Data.Bytes
     }
     return false;
   });
-  if (!utxo) {
-    throw new Error(">>> Không tìm thấy UTxO");   
-  }
-  console.log(`>>> Unlock-UTxO.txhash: ${utxo.txHash}`); // Hiển thị Datum của UTxO
-  const decodedDatum1 = Data.from<Vestingdatum>(utxo.datum, Vestingdatum);
-  // console.log("Now:              ", BigInt(lucid.utils.unixTimeToSlots(Date.now()) ));
-  // console.log("Now:              ", Date.now()) ;
-  // console.log("Datum lock_until: ", Number(decodedDatum1.lock_until));
-  // console.log("Time offset:      ", -Number(decodedDatum1.lock_until) + Date.now());
-  console.log(`>>> Datum owner: ${decodedDatum1.owner}`);
-  console.log(`>>> Datum beneficiary: ${decodedDatum1.beneficiary}`);
-  console.log(`>>> Redeemer: ${redeemer}`); 
- 
-  const offsetvalid= 25 * 60 * 1000; // Thời gian còn hiệu lực để beneficiary có thể unlock utxo
+  const offsetvalid= 10 * 60 * 1000; // 10 phút
+  // if (!utxo) {
+  //   throw new Error("No matching UTxO found");   
+  // }
 
+  console.log(`Unlock UTxO.txhash: ${utxo.txHash}`); // Hiển thị Datum của UTxO
+
+  const decodedDatum1 = Data.from<Vestingdatum>(utxo.datum, Vestingdatum);
+  console.log("Now:              ", BigInt(lucid.utils.unixTimeToSlots(Date.now()) ));
+  console.log("Now:              ", Date.now()) ;
+  console.log("Datum lock_until: ", Number(decodedDatum1.lock_until));
+  console.log("Time offset:      ", -Number(decodedDatum1.lock_until) + Date.now());
+  console.log(`Datum owner: ${decodedDatum1.owner}`);
+  console.log(`Datum beneficiary: ${decodedDatum1.beneficiary}`);
+  console.log(`Redeemer: ${redeemer}`); 
+ 
+  // Tiếp tục thực hiện giao dịch
   const tx = await lucid
     .newTx()
     .collectFrom([utxo], redeemer)
     .attachScript(vesting_scripts)
     .addSigner(paymentOwner?.hash)
     .validTo(Date.now() + offsetvalid)
-    .validFrom(Date.now() - offsetvalid)
-    .commit();
-    const signedTx = await tx.sign().commit();
-    const txHash = await signedTx.submit(); return txHash;
+    .validFrom(Date.now() - offsetvalid).commit();
+  const signedTx = await tx.sign().commit();
+  const txHash = await signedTx.submit(); return txHash;
 }
 
 async function main() {
   try {
     // Gọi hàm lockUtxo để khóa UTxO
-    const txHash = await lockUtxo(lovelace_lock); 
+    // const txHash = await lockUtxo(lovelace_lock); 
 
     // Gọi hàm unlockUtxo để mở khóa UTxO
-    // const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.owner);
-    //  const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.beneficiary);
-  console.log(`Transaction hash: https://preview.cexplorer.io/tx/${txHash}`);
+    const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.beneficiary);
+    //const txHash = await unlockUtxo("0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824", d.owner);
+    
+   
+   console.log(`Transaction hash: https://preview.cexplorer.io/tx/${txHash}`);
   } catch (error) {
     console.error("Error main :", error);
   }
