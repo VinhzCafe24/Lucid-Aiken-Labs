@@ -134,6 +134,9 @@ async function main() {
 // > Datum owner:       0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824
 // > Redeemer:          0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824
 // > Datum beneficiary: 8f0bdf4e042033c6fc1b760356b281d9e5a3e82ff7135ce5ef1cf7f9
+// > Sở-hữu.hash: 0b825942d01e394b83ab6a7d7a44857bfc7b136a7301f500b8685824
+// > Thụ-hưởng.hash: afb5c153b8e290f50f77df38543c07e1945324add3d8ccee2d0c526d
+// > Vesting-Addr: addr_test1wqxdf9hsm69z6u4g29xqazx0xmarkgmr0hl2w70dfxxu7dsqmfmgx
     
    
    console.log(`Transaction hash: https://preview.cexplorer.io/tx/${txHash}`);
