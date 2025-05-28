@@ -32,16 +32,13 @@ const Vestingdatum = Data.Object({
 
 type Vestingdatum = typeof Vestingdatum;
 
-//---------------------------------------------------
-
 const deadlineDate = Date.now(); 
 const offset = 30 * 60 * 1000;  // Thời gian hiệu lực 
 const deadlinePosIx =BigInt((deadlineDate+offset))
 console.log("> DeadlinePosIx: ", deadlinePosIx);
 
 const { payment: paymentBeneficiary } = Addresses.inspect(
-  // "addr_test1qz8shh6wqssr83hurdmqx44js8v7tglg9lm3xh89auw007dd38kf3ymx9c2w225uc7yjmplr794wvc96n5lsy0wsm8fq9n5epq",
-     "addr_test1qzhmts2nhr3fpag0wl0ns4puqlseg5ey4hfa3n8w95x9ym0mgx64n2gpvmhy8ru6m08307wwv7q25hmtxafd5end5eusk8c8vd", // ví nhận thụ hưởng
+     "addr_test1qzhmts2nhr3fpag0wl0ns4puqlseg5ey4hfa3n8w95x9ym0mgx64n2gpvmhy8ru6m08307wwv7q25hmtxafd5end5eusk8c8vd", // 
 ); console.log(`> Thụ-hưởng.hash: ${paymentBeneficiary.hash}`); 
 
 // giá trị Datum chứa Thời hạn chia tài sản dealinePosTx
@@ -61,7 +58,6 @@ const RedeemerSchema = Data.Object({
 });
 
 type RedeemerSchema = typeof RedeemerSchema;
-
 const lovelace_lock=19_019_019n // lock 100tADA theo yêu cầu bài tập
 
 // === Hàn Lock UTxO =====  
@@ -93,7 +89,7 @@ export async function unlockUtxo(redeemer: RedeemerSchema, find_vest: Data.Bytes
   });
     
   const offsetvalid= 50 * 60 * 1000; // Thời gian hiệu lực -- offsetvalid--2
-    
+
   if (!utxo) { throw new Error("No matching UTxO found"); }
 
   console.log(`Unlock UTxO.txhash: ${utxo.txHash}`); // Hiển thị Datum của UTxO
