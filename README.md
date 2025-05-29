@@ -1,4 +1,3 @@
 # Lucid-Aiken-Labs
-
-Bài tập phần Cardano Smart contract. 
-Lớp C2VN - Cardano to Việt Nam
+Bài tập Lớp C2VN_BK02 - HP Smartcontract.Aiken+Lucid 
+Cardano to Việt Nam
